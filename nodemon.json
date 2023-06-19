@@ -1,0 +1,10 @@
+{
+    "env": {
+      "DB_URI": "mongodb+srv://momen:jzzfNIjS8RsfP4Rm@cluster0.pnixwld.mongodb.net/traveler",
+      "PORT": 5000,
+      "JWT_SECRET": "somesupersecretsecret",
+      "SENDGRID_API_KEY": "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",
+      "SENDGRID_FROM_EMAIL": "momenelnakeeb7@gmail.com"
+    }
+  }
+  
