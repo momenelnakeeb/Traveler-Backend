@@ -11,7 +11,7 @@ const SurveyResponse = require("../models/survey.model")
 const fs = require('fs');
 const moment = require('moment-timezone');
 
-const cloudinary = require('../util/cloudinary').default;
+const cloudinary = require('../util/cloudinary');
 
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const transporter = nodemailer.createTransport(

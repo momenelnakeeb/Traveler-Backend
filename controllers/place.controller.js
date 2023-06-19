@@ -2,7 +2,6 @@ const Place = require('../models/place.model');
 const Comment=require('../models/comment.model');
 const Rating=require('../models/rating.model');
 const User=require('../models/user.model');
-
 const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
 const { ValidationError } = require('../errors/validation.error');
