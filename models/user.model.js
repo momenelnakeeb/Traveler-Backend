@@ -62,15 +62,15 @@ const userSchema = new Schema({
         default: false
     }
     ,
-    commentNumber: {
-        type:Number,
-        default: 0
-    },
-    ratingNumber: {
-        type:Number,
-        default: 0
-    }
-    ,
+    // commentNumber: {
+    //     type:Number,
+    //     default: 0
+    // },
+    // ratingNumber: {
+    //     type:Number,
+    //     default: 0
+    // }
+    // ,
     passwordResetOTP: {
         otp: {
           type: Number,
