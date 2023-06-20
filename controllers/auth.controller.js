@@ -11,18 +11,25 @@ const SurveyResponse = require("../models/survey.model")
 const fs = require('fs');
 const moment = require('moment-timezone');
 
+
 const cloudinary = require('../util/cloudinary');
 
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
-const transporter = nodemailer.createTransport(
-  sendgridTransport({
+// const transporter = nodemailer.createTransport(
+//   sendgridTransport({
+//     auth: {
+//       api_key:
+//       process.env.SENDGRID_API_KEY
+//     }
+//   })
+// );
+const transporter = nodemailer.createTransport({
+  service:'gmail',
     auth: {
-      api_key:
-      process.env.SENDGRID_API_KEY
+      user:process.env.GOOGLE_FROM_EMAIL,
+       pass:process.env.PASSWORD
     }
-  })
-  
-);
+  });
 exports.uploadPicture = async (req, res, next) => {
   try {
     const errors = validationResult(req);
@@ -311,11 +318,11 @@ exports.login = async (req, res, next) => {
       // console.log(user.age); // Output: 24
       const currentDate = moment();
       const lastLoginDate = user.lastLogin
-        ? moment(user.lastLogin).startOf('minute')
+        ? moment(user.lastLogin).startOf('day')
         : null;
   
       // Check if a day or more has passed since the last login
-      if (!lastLoginDate || !currentDate.isSame(lastLoginDate, 'minute')) {
+      if (!lastLoginDate || !currentDate.isSame(lastLoginDate, 'day')) {
         // Increment the loginPoints and update the lastLogin field
         user.loginPoints = (user.loginPoints || 0) + 1;
         user.lastLogin = currentDate.toISOString();

@@ -23,8 +23,15 @@ exports.createRating = async (req, res, next) => {
           error.statusCode = 400;
           throw error;
       }
-
+      // Check if the user has already made a comment
       const user = await User.findById(userId);
+      const hasMadeRating = await Rating.exists({ user: userId });
+
+      if (!user.ratingPageUrls.includes(pageUrl)) {
+        user.ratingPageUrls.push(pageUrl);
+        user.loginPoints += 1; // Increase login points for the first comment on this pageUrl
+        await user.save();
+      }
       const place = await Place.findOne({ pageUrl });
       if (!place) {
           const error = new Error('Place not found.');
@@ -37,7 +44,8 @@ exports.createRating = async (req, res, next) => {
           user: user,
           rating: rating,
       });
-
+      user.ratingNumber+= 1;
+      await user.save();
       const addedRating = await ratingObj.save();
 
       const ratingCount = await Rating.find({ pageUrl });

@@ -78,6 +78,13 @@ const userSchema = new Schema({
         expiresAt: {
           type: Date}},
           
+    commentedPageUrls: [{
+        type: String
+    }],
+    ratingPageUrls: [{
+        type: String
+    }],
+          
           coupon: [
             {
                 code: {
