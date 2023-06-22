@@ -2,6 +2,7 @@ const { validationResult } = require('express-validator');
 const User = require('../models/user.model');
 const Place = require('../models/place.model');
 const SupervisorPlace = require('../models/supervisorPlaces.model');
+const cloudinary = require('../util/cloudinary');
 
 exports.createSupervisorPlace = async (req, res, next) => {
   try {
@@ -111,7 +112,15 @@ exports.getSupervisorPlaces = async (req, res, next) => {
   
       supervisorPlace.title = title;
       supervisorPlace.description = description;
-      supervisorPlace.image = imagePath;
+  
+      if (req.file.path) {
+        // Delete the old image if it exists
+        if (supervisorPlace.image) {
+          const publicId = supervisorPlace.image.split('/').pop().split('.')[0];
+          await cloudinary.uploader.destroy(publicId);
+        }
+        supervisorPlace.image = req.file.path;
+      }
   
       const updatedSupervisorPlace = await supervisorPlace.save();
   
@@ -127,6 +136,7 @@ exports.getSupervisorPlaces = async (req, res, next) => {
       next(err);
     }
   };
+  
   
 
 exports.deleteSupervisorPlace = async (req, res, next) => {
