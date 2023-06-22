@@ -20,6 +20,8 @@ const ratingRoutes = require('./routes/rating.route');
 const placeRoutes=require('./routes/place.route');
 const couponRoutes=require('./routes/coupon.route');
 const statisticsRoutes = require('./routes/statistics.route');
+const SupervisorPlaces = require('./routes/supervisorPlaces.route');
+
 
 const app = express();
 // const fileStorage = multer.diskStorage({
@@ -53,6 +55,7 @@ app.use('/admin', commentRoutes);
 app.use('/admin', ratingRoutes);
 app.use('/coupon',couponRoutes);
 app.use('/statistics', statisticsRoutes);
+app.use('/SupervisorPlaces', SupervisorPlaces);
 // add multer middleware
 // app.use(multer().single('profilePicture'));
 
