@@ -40,11 +40,11 @@ exports.createSupervisorPlace = async (req, res, next) => {
       message: 'SupervisorPlace created successfully!',
       data: {
         supervisorPlace: savedSupervisorPlace,
-        user: {
-          _id: user._id,
-          name: user.name,
-          image: user.image
-        }
+        // user: {
+        //   _id: user._id,
+        //   name: user.name,
+        //   image: user.image
+        // }
       }
     });
   } catch (err) {
