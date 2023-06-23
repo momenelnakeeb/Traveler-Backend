@@ -174,7 +174,7 @@ exports.requestPasswordReset = async (req, res, next) => {
 
     // Send the OTP to the user's email using nodemailer
     await transporter.sendMail({
-      from: process.env.SENDGRID_FROM_EMAIL,
+      from: process.env.GOOGLE_FROM_EMAIL,
       to: user.email,
       subject: 'Password Reset OTP',
       text: `Your OTP for password reset is ${otp}`,
