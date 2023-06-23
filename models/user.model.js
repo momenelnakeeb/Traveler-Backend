@@ -6,12 +6,13 @@ const { PasswordManager } = require('../services/passwordManager.service');
 const userSchema = new Schema({
     name: {
         type: String,
-        required: true
+        required: true,
+        unique: true, // Define unique index for email field
     },
     email: {
         type: String,
         required: true,
-
+        unique: true, // Define unique index for name field
     },
     loginPoints: {
         type:Number,
