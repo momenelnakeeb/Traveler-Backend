@@ -108,7 +108,7 @@ router.get('/users/:id', async (req, res) => {
 });
 
 router.post(
-    '/signup',upload,
+    '/signup',upload(),
     [
         body('email')
             .isEmail(),

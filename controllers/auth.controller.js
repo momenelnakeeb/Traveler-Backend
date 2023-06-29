@@ -24,12 +24,12 @@ const { CloudinaryStorage } = require('multer-storage-cloudinary');
 //   })
 // );
 const transporter = nodemailer.createTransport({
-  service:'gmail',
-    auth: {
-      user:process.env.GOOGLE_FROM_EMAIL,
-       pass:process.env.PASSWORD
-    }
-  });
+  service: 'gmail',
+  auth: {
+    user: process.env.GOOGLE_FROM_EMAIL,
+    pass: process.env.PASSWORD
+  }
+});
 exports.uploadPicture = async (req, res, next) => {
   try {
     const errors = validationResult(req);
@@ -51,7 +51,7 @@ exports.uploadPicture = async (req, res, next) => {
       }
 
       // Upload file to Cloudinary
-      
+
       user.image = req.file.path;
     }
 
@@ -91,12 +91,12 @@ exports.updatePicture = async (req, res, next) => {
       error.data = errors.array();
       throw error;
     }
-  
+
     const user = await User.findById(req.userData.userId);
     if (!user) {
       throw new AuthError('User not found');
     }
-  
+
     if (req.file.path) {
       // Delete the old image if it exists
       if (user.image) {
@@ -105,9 +105,9 @@ exports.updatePicture = async (req, res, next) => {
       }
       user.image = req.file.path;
     }
-   
+
     const updatedUser = await user.save();
-  
+
     res.status(200).json({
       success: true,
       message: 'Profile picture updated!',
@@ -126,18 +126,18 @@ exports.deletePicture = async (req, res, next) => {
     if (!user) {
       throw new AuthError('User not found');
     }
-    
+
     if (user.image) {
       // Extract public_id from image URL
       const publicId = user.image.split('/').pop().split('.')[0];
-      
+
       // Delete image from Cloudinary
       await cloudinary.uploader.destroy(publicId);
-      
+
       // Update user record
       user.image = undefined;
       await user.save();
-      
+
       return res.status(200).json({
         success: true,
         message: 'Profile picture deleted!',
@@ -178,7 +178,7 @@ exports.requestPasswordReset = async (req, res, next) => {
       to: user.email,
       subject: 'Password Reset OTP',
       text: `Your OTP for password reset is ${otp}`,
-      html:`<!DOCTYPE html>
+      html: `<!DOCTYPE html>
       <html>
       <head>
         <style>
@@ -349,6 +349,7 @@ exports.resetPassword = async (req, res, next) => {
 
 exports.signup = async (req, res, next) => {
   try {
+    console.log(req.file);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       const error = new ValidationError(`Validation failed - ${errors.array()}`);
@@ -357,16 +358,16 @@ exports.signup = async (req, res, next) => {
     }
 
     const { email, name, password, gender, date } = req.body;
-    const { file } = req;
+    
+    const existedUser = await User.findOne({ $or: [{ email: email }, { name: name }] });
+    if (existedUser) {
+      if (existedUser.email === email) {
+        throw new ValidationError('The email you have entered is already used by a different user');
+      }
 
-    const user = await User.findOne({ email: email });
-    if (user) {
-      throw new ValidationError('The email you have entered is already used by a different user');
-    }
-
-    const repetitionName = await User.findOne({ name: name });
-    if (repetitionName) {
-      throw new ValidationError('The name you have entered is already used by a different user');
+      if (existedUser.name === name) {
+        throw new ValidationError('The name you have entered is already used by a different user');
+      }
     }
 
     const newUser = new User({
@@ -375,7 +376,7 @@ exports.signup = async (req, res, next) => {
       name: name,
       date: date,
       gender: gender,
-      image:  req.file ? req.file.path : null 
+      image: req.file ? req.file.path : null
     });
 
     const addedUser = await newUser.save();
@@ -386,8 +387,8 @@ exports.signup = async (req, res, next) => {
       data: addedUser,
     });
   } catch (err) {
-    if (req.image) {
-      const publicId = req.image.split('/').pop().split('.')[0];
+    if (req.file) {
+      const publicId = req.file.path.split('/').pop().split('.')[0];
 
       // Delete image from Cloudinary
       await cloudinary.uploader.destroy(publicId);
@@ -398,40 +399,40 @@ exports.signup = async (req, res, next) => {
 
 
 exports.login = async (req, res, next) => {
-    try {
-        const { email, password } = req.body;
-      
-        const user = await User.findOne({ email: email });
-        if (!user) {
-            throw new AuthError('not valid login credentials');
-        }
+  try {
+    const { email, password } = req.body;
 
-        await PasswordManager.compare(password, user.password);
+    const user = await User.findOne({ email: email });
+    if (!user) {
+      throw new AuthError('not valid login credentials');
+    }
 
-        const token = jwt.sign(
-            {
-                email: user.email,
-                userId: user._id
-            },
-            process.env.JWT_SECRET,
-            { expiresIn: '1h' }
-        );
-      // // Store the JWT token in an HTTP-only cookie
-      // res.cookie('token', token, { httpOnly: true });
-      // Search for the user's survey response
-      // console.log(user.age); // Output: 24
-      const currentDate = moment();
-      const lastLoginDate = user.lastLogin
-        ? moment(user.lastLogin).startOf('day')
-        : null;
-  
-      // Check if a day or more has passed since the last login
-      if (!lastLoginDate || !currentDate.isSame(lastLoginDate, 'day')) {
-        // Increment the loginPoints and update the lastLogin field
-        user.loginPoints = (user.loginPoints || 0) + 1;
-        user.lastLogin = currentDate.toISOString();
-        await user.save();
-      }
+    await PasswordManager.compare(password, user.password);
+
+    const token = jwt.sign(
+      {
+        email: user.email,
+        userId: user._id
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+    // // Store the JWT token in an HTTP-only cookie
+    // res.cookie('token', token, { httpOnly: true });
+    // Search for the user's survey response
+    // console.log(user.age); // Output: 24
+    const currentDate = moment();
+    const lastLoginDate = user.lastLogin
+      ? moment(user.lastLogin).startOf('day')
+      : null;
+
+    // Check if a day or more has passed since the last login
+    if (!lastLoginDate || !currentDate.isSame(lastLoginDate, 'day')) {
+      // Increment the loginPoints and update the lastLogin field
+      user.loginPoints = (user.loginPoints || 0) + 1;
+      user.lastLogin = currentDate.toISOString();
+      await user.save();
+    }
 
     const surveyResponse = await SurveyResponse.findOne({ user: user._id });
     // Update the `hasSurvey` field if a survey response is found
@@ -439,27 +440,27 @@ exports.login = async (req, res, next) => {
       user.hasSurvey = true;
       await user.save();
     }
-    
 
-    
-        res.status(200).json({
-            success: true,
-            message: 'user logged In',
-            data: user,
-            token: token,
-        });
-    } catch (err) {
-        next(err);
-    }
+
+
+    res.status(200).json({
+      success: true,
+      message: 'user logged In',
+      data: user,
+      token: token,
+    });
+  } catch (err) {
+    next(err);
+  }
 };
 exports.postLogout = async (req, res, next) => {
-    try {
-        // Clear the JWT token from the client-side storage
-        res.clearCookie('token');
-        res.status(200).json({ message: 'User logged out successfully' });
-    } catch (err) {
-        next(err);
-    }
+  try {
+    // Clear the JWT token from the client-side storage
+    res.clearCookie('token');
+    res.status(200).json({ message: 'User logged out successfully' });
+  } catch (err) {
+    next(err);
+  }
 };
 
 //logging out with storing the jwt in database by applying this line of code in the login-controller
@@ -478,146 +479,146 @@ exports.postLogout = async (req, res, next) => {
 
 
 exports.updateName = async (req, res, next) => {
-    try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        const error = new ValidationError(`Validation failed - ${errors.array()}`);
-        error.data = errors.array();
-        throw error;
-      }
-  
-      const { name } = req.body;
-  
-      const user = await User.findById(req.userData.userId);
-      if (!user) {
-        throw new AuthError('User not found');
-      }
-  
-      user.name = name;
-      const updatedUser = await user.save();
-  
-      res.status(200).json({
-        success: true,
-        message: 'User updated!',
-        data: updatedUser
-      });
-    } catch (err) {
-      next(err);
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const error = new ValidationError(`Validation failed - ${errors.array()}`);
+      error.data = errors.array();
+      throw error;
     }
-  };
-  
+
+    const { name } = req.body;
+
+    const user = await User.findById(req.userData.userId);
+    if (!user) {
+      throw new AuthError('User not found');
+    }
+
+    user.name = name;
+    const updatedUser = await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'User updated!',
+      data: updatedUser
+    });
+  } catch (err) {
+    next(err);
+  }
+};
 
 
-  exports.updateEmail = async (req, res, next) => {
-    try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        const error = new ValidationError(`Validation failed - ${errors.array()}`);
-        error.data = errors.array();
-        throw error;
-      }
-  
-      const { email } = req.body;
-  
-      const user = await User.findById(req.userData.userId);
-      if (!user) {
-        throw new AuthError('User not found');
-      }
-  
-      const repetitionEmail = await User.findOne({ email: email });
-      if (repetitionEmail) {
-          throw new ValidationError('The email you have entered is already used by another user');
-      }
-  
-      user.email = email;
-      const updatedUser = await user.save();
-  
-      res.status(200).json({
-        success: true,
-        message: 'Email updated!',
-        data: updatedUser
-      });
-    } catch (err) {
-      next(err);
+
+exports.updateEmail = async (req, res, next) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const error = new ValidationError(`Validation failed - ${errors.array()}`);
+      error.data = errors.array();
+      throw error;
     }
+
+    const { email } = req.body;
+
+    const user = await User.findById(req.userData.userId);
+    if (!user) {
+      throw new AuthError('User not found');
+    }
+
+    const repetitionEmail = await User.findOne({ email: email });
+    if (repetitionEmail) {
+      throw new ValidationError('The email you have entered is already used by another user');
+    }
+
+    user.email = email;
+    const updatedUser = await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Email updated!',
+      data: updatedUser
+    });
+  } catch (err) {
+    next(err);
+  }
 };
 
 
 
 exports.updatePassword = async (req, res, next) => {
-    try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        const error = new ValidationError(`Validation failed - ${errors.array()}`);
-        error.data = errors.array();
-        throw error;
-      }
-  
-      const { currentPassword, newPassword } = req.body;
-  
-      const user = await User.findById(req.userData.userId);
-      if (!user) {
-        throw new AuthError('User not found');
-      }
-  
-      await PasswordManager.compare(currentPassword, user.password);
-      user.password = newPassword;
-      const updatedUser = await user.save();
-  
-      res.status(200).json({
-        success: true,
-        message: 'Password updated!',
-        data: updatedUser
-      });
-    } catch (err) {
-      next(err);
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const error = new ValidationError(`Validation failed - ${errors.array()}`);
+      error.data = errors.array();
+      throw error;
     }
+
+    const { currentPassword, newPassword } = req.body;
+
+    const user = await User.findById(req.userData.userId);
+    if (!user) {
+      throw new AuthError('User not found');
+    }
+
+    await PasswordManager.compare(currentPassword, user.password);
+    user.password = newPassword;
+    const updatedUser = await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Password updated!',
+      data: updatedUser
+    });
+  } catch (err) {
+    next(err);
+  }
 };
 
 
 exports.updateDateOfBirth = async (req, res, next) => {
-    try {
-        const { date } = req.body;
-       
+  try {
+    const { date } = req.body;
 
-        const user = await User.findById(req.userData.userId);
-        if (!user) {
-            throw new AuthError('not valid login credentials');
-        }
-        user.date = date;
-        const updatedUser = await user.save();
 
-        res.status(200).json({
-            success: true,
-            message: 'Date of birth updated successfully!',
-            data: updatedUser,
-        });
-    } catch (err) {
-        next(err);
+    const user = await User.findById(req.userData.userId);
+    if (!user) {
+      throw new AuthError('not valid login credentials');
     }
+    user.date = date;
+    const updatedUser = await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Date of birth updated successfully!',
+      data: updatedUser,
+    });
+  } catch (err) {
+    next(err);
+  }
 };
 
 exports.updateGender = async (req, res, next) => {
-    try {
-        const { gender } = req.body;
-        
+  try {
+    const { gender } = req.body;
 
-        const user = await User.findById(req.userData.userId);
-        if (!user) {
-            throw new AuthError('not valid login credentials');
-        }
 
-        user.gender = gender;
-        const updatedUser = await user.save();
-
-        res.status(200).json({
-            success: true,
-            message: 'Gender updated successfully!',
-            data: updatedUser,
-        });
-    } catch (err) {
-        next(err);
+    const user = await User.findById(req.userData.userId);
+    if (!user) {
+      throw new AuthError('not valid login credentials');
     }
+
+    user.gender = gender;
+    const updatedUser = await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Gender updated successfully!',
+      data: updatedUser,
+    });
+  } catch (err) {
+    next(err);
+  }
 };
 
 
