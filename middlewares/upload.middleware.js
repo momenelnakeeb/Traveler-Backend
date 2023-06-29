@@ -22,7 +22,11 @@ const upload = (req, res, next) => {
   // remove the uploaded file if an error occurs during request handling
   const oldHandler = res.json;
   res.json = async function (body) {
-    if (this.statusCode >= 400 && req.file?.path) {
+    if (!req.file) {
+      return;
+    }
+
+    if (this.statusCode >= 400 && req.file.path) {
       // const publicId = req.file.path;
       
         const publicId = req.file.path.split('/').pop().split('.')[0];
