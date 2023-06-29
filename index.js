@@ -10,8 +10,8 @@ const app = require('./app');
                 console.log(err);
             }
 
-            app.listen(process.env.PORT || 5000, () => {
-                console.log(`server is up and running on port ${process.env.PORT || 5000}`);
+            app.listen(process.env.PORT || 80, () => {
+                console.log(`server is up and running on port ${process.env.PORT || 80}`);
             });
         });
     } catch (err) {
