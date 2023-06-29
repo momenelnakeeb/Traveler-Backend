@@ -178,6 +178,110 @@ exports.requestPasswordReset = async (req, res, next) => {
       to: user.email,
       subject: 'Password Reset OTP',
       text: `Your OTP for password reset is ${otp}`,
+      html:`<!DOCTYPE html>
+      <html>
+      <head>
+        <style>
+          .container1 {
+            background: linear-gradient(to bottom right, #d0ae96, #483434, #c6a288);
+            border-radius: 15px;
+            padding: 15px; 
+            width: 40%;
+            
+          }
+          .container {
+            display: flex;
+            flex-direction: row;
+            background-color: #ffffff;
+            border-radius: 15px;
+            padding: 10px;
+          }
+          .Traveller {
+            font-size: 40px;
+            font-weight: bold;
+            font-family: cursive;
+            color: #483434;
+          }
+          .otp-image {
+            width: 220px;
+            height: 200px;
+            border-radius: 50%;
+          }
+          .word {
+            font-weight: bold;
+            font-family: Arial, sans-serif;
+            margin-top: 10px;
+            font-size: 20px;
+          }
+          .word1 {
+            font-weight: bold;
+            font-family: Arial, sans-serif;
+            margin-bottom: 10px;
+            font-size: 20px;
+          }
+          .otp {
+            font-weight: bold;    
+            font-family: Arial, sans-serif;  
+            margin-bottom: 10px;
+            font-size: 28px;
+          }
+          .time {
+            color: red;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-family: Arial, sans-serif;  
+            font-size: 20px;
+          }
+          @media only screen and (max-width: 1300px) {
+            .otp-image {
+              width: 150px;
+              height: 220px;
+              border-radius: 50%;
+            }
+            .word, .word1, .time {
+              font-size: 13px;
+            }
+            .Traveller {
+              font-size: 28px;
+            }
+            .otp {
+              font-size: 18px;
+            }  
+            .container {
+              display: flex;
+            flex-direction: row;
+            background-color: #ffffff;
+            border-radius: 15px;
+            padding: 10px;
+              width: 100%;
+            } 
+          }
+          .container2 {
+            margin-right: 10px;
+            margin-left: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container1">
+          <div class="container">
+            <div class="container2">
+              <div class="Traveller">Traveller</div>
+              <div class="word">Here is your (OTP)</div>
+              <div class="word1">to reset password</div>
+              <div class="otp">${otp}</div>
+              <div class="time">It's valid for 10 minutes only</div>
+              <div>If you didn't request this OTP, please ignore this message</div> 
+            </div>
+            <img class="otp-image" src="https://i.ibb.co/rpfWqNt/20230623040639-fpdl-in-security-otp-one-time-password-smartphone-shield-9904-104-normal.jpg" alt="OTP Image">
+          </div>
+        </div>
+      </body>
+      </html>`
     });
 
     res.status(200).json({
