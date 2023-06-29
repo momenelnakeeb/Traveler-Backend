@@ -60,12 +60,14 @@ app.use('/SupervisorPlaces', SupervisorPlaces);
 // app.use(multer().single('profilePicture'));
 
   
-app.use(
-   upload)
-  ;
-  app.use(express.static(path.join(__dirname, 'public')));
-  app.use('/public', express.static(path.join(__dirname, 'public')));
-  
+app.use(upload);
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/public', express.static(path.join(__dirname, 'public')));
+
+app.get('/', async (req, res) => {
+  res.send('hello from the app');
+});
+
 app.all('*', routeCatcher);
 app.use(errorHandler);
 // app.use(uploadHandler);
