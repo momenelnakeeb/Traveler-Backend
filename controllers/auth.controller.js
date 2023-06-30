@@ -349,7 +349,6 @@ exports.resetPassword = async (req, res, next) => {
 
 exports.signup = async (req, res, next) => {
   try {
-    console.log(req.file);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       const error = new ValidationError(`Validation failed - ${errors.array()}`);
@@ -387,12 +386,6 @@ exports.signup = async (req, res, next) => {
       data: addedUser,
     });
   } catch (err) {
-    if (req.file) {
-      const publicId = req.file.path.split('/').pop().split('.')[0];
-
-      // Delete image from Cloudinary
-      await cloudinary.uploader.destroy(publicId);
-    }
     next(err);
   }
 };

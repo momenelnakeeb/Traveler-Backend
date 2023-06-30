@@ -15,7 +15,7 @@ router.post(
   ],
   isSupervisor,
   isAuth,
-  upload,
+  upload(),
   supervisorPlacesController.createSupervisorPlace
 );
 
@@ -29,7 +29,7 @@ router.patch(
     ],
     isSupervisor,
     isAuth,
-    upload,
+    upload(),
     supervisorPlacesController.updateSupervisorPlace
   );
   router.delete(

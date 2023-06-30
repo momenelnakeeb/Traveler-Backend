@@ -80,12 +80,12 @@ router.post('/survey', isAuth, async (req, res, next) => {
 
 
 router.post('/upload-profilePicture',
-upload,
+upload(),
   isAuth,
   authController.uploadPicture
 );
 router.patch('/update-profilePicture',
-upload,
+upload(),
   isAuth,
   authController.updatePicture
 );
