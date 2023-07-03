@@ -33,6 +33,6 @@ router.post(
     body('couponValue').notEmpty(),
   ]
   ,isAuth,isSupervisor, couponController.deleteCoupon);
-router.get('/get-coupon',isAuth,couponController.convertPointsToCoupon);
+router.post('/get-coupon',isAuth,couponController.convertPointsToCoupon);
 router.get('/get-allCoupons',isAuth,couponController.getUserCoupons);
 module.exports = router;

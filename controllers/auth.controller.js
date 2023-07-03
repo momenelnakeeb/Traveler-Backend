@@ -415,7 +415,7 @@ exports.login = async (req, res, next) => {
         userId: user._id
       },
       process.env.JWT_SECRET,
-      { expiresIn: '1h' }
+      { expiresIn: '3h' }
     );
     // // Store the JWT token in an HTTP-only cookie
     // res.cookie('token', token, { httpOnly: true });
