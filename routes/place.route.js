@@ -11,9 +11,10 @@ const multer = require('multer');
 const checkAuth = require("../middlewares/checkAuth.middleware")
 
 const router = express.Router();
-router.post('/add-place',upload,isSupervisor, isAuth, placeController.addPlace);
+router.post('/add-place',
+upload(),isSupervisor, isAuth, placeController.addPlace);
 router.patch('/update-placePicture/:placeId',
-upload,isSupervisor,
+upload(),isSupervisor,
   isAuth,
   placeController.updatePlacepicture
 );
