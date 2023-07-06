@@ -382,6 +382,7 @@ exports.signup = async (req, res, next) => {
       name: name,
       date: date,
       gender: gender,
+      loginPoints: 50,
       image: req.file ? req.file.path : null
     });
 

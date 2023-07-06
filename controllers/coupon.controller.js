@@ -144,6 +144,7 @@ exports.convertPointsToCoupon = async (req, res, next) => {
       success: true,
       message: 'Points converted to coupon successfully',
       couponCode: couponCode,
+      pointsLeft: user.loginPoints, // Include the points left in the response
     });
   } catch (err) {
     next(err);
