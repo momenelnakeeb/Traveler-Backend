@@ -169,9 +169,11 @@ exports.updateTitle = async (req, res, next) => {
     if (!place) {
       throw new AuthError('Place not found');
     }
-    const { title } = req.body;
+    const { title, latitude, longitude } = req.body;
 
     place.title = title;
+    place.latitude = latitude;
+    place.longitude = longitude;
     const updatedPlace = await place.save();
 
     res.status(200).json({

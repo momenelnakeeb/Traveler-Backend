@@ -23,6 +23,8 @@ router.patch(
     '/update-title/:placeId',
     [
       body('title').notEmpty(),
+      body('latitude').notEmpty().isNumeric(),
+      body('longitude').notEmpty().isNumeric()
     ],
     isAuth,isSupervisor, // Add the isAuth middleware here
     placeController.updateTitle
